@@ -11,6 +11,8 @@ selected dataset.
 
 import os
 import numpy as np
+from tqdm import tqdm
+import argparse
 
 from bop_toolkit_lib import config
 from bop_toolkit_lib import dataset_params
@@ -22,15 +24,24 @@ from bop_toolkit_lib import visibility
 
 # PARAMETERS.
 ################################################################################
+
+parser = argparse.ArgumentParser()
+parser.add_argument('--val', action=argparse.BooleanOptionalAction, help="train or validation (true or false)")
+args = parser.parse_args()
+print(f"args: {args}")
+
+
 p = {
   # See dataset_params.py for options.
   'dataset': 'lm',
 
   # Dataset split. Options: 'train', 'val', 'test'.
-  'dataset_split': 'test',
+  # 'dataset_split': 'train',
+  # '  if args.val:
+  #     dataset_split': 'val',
 
   # Dataset split type. None = default. See dataset_params.py for options.
-  'dataset_split_type': None,
+  'dataset_split_type': 'pbr',
 
   # Whether to save visualizations of visibility masks.
   'vis_visibility_masks': False,
@@ -42,7 +53,7 @@ p = {
   'renderer_type': 'vispy',  # Options: 'vispy', 'cpp', 'python'.
 
   # Folder containing the BOP datasets.
-  'datasets_path': config.datasets_path,
+  'datasets_path': "D:/bop_toolkit/data/lm/blenderproc/bop_data",
 
   # Path template for output images with object masks.
   'vis_mask_visib_tpath': os.path.join(
@@ -50,6 +61,11 @@ p = {
     'vis_gt_visib_delta={delta}', '{dataset}', '{split}', '{scene_id:06d}',
     '{im_id:06d}_{gt_id:06d}.jpg'),
 }
+
+if args.val:
+  p['dataset_split'] = 'val'
+else:
+  p['dataset_split'] = 'train'
 ################################################################################
 
 
@@ -91,7 +107,7 @@ for scene_id in scene_ids:
 
   scene_gt_info = {}
   im_ids = sorted(scene_gt.keys())
-  for im_counter, im_id in enumerate(im_ids):
+  for im_counter, im_id in enumerate(tqdm(im_ids)):
     if im_counter % 100 == 0:
       misc.log(
         'Calculating GT info - dataset: {} ({}, {}), scene: {}, im: {}'.format(

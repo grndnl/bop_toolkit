@@ -5,6 +5,9 @@
 
 import os
 import numpy as np
+from tqdm import tqdm
+import argparse
+
 
 from bop_toolkit_lib import config
 from bop_toolkit_lib import dataset_params
@@ -16,15 +19,22 @@ from bop_toolkit_lib import visibility
 
 # PARAMETERS.
 ################################################################################
+parser = argparse.ArgumentParser()
+parser.add_argument('--val', action=argparse.BooleanOptionalAction, help="train or validation (true or false)")
+args = parser.parse_args()
+print(f"args: {args}")
+
+
 p = {
   # See dataset_params.py for options.
   'dataset': 'lm',
 
   # Dataset split. Options: 'train', 'val', 'test'.
-  'dataset_split': 'test',
+  # 'dataset_split': 'train',
+  # 'dataset_split': 'val',
 
   # Dataset split type. None = default. See dataset_params.py for options.
-  'dataset_split_type': None,
+  'dataset_split_type': 'pbr',
 
   # Tolerance used in the visibility test [mm].
   'delta': 15,  # 5 for ITODD, 15 for the other datasets.
@@ -33,8 +43,13 @@ p = {
   'renderer_type': 'vispy',  # Options: 'vispy', 'cpp', 'python'.
 
   # Folder containing the BOP datasets.
-  'datasets_path': config.datasets_path,
+  'datasets_path': "D:/bop_toolkit/data/lm/blenderproc/bop_data",
 }
+
+if args.val:
+  p['dataset_split'] = 'val'
+else:
+  p['dataset_split'] = 'train'
 ################################################################################
 
 
@@ -47,6 +62,7 @@ if p['dataset'] == 'tless':
   model_type = 'cad'
 dp_model = dataset_params.get_model_params(
   p['datasets_path'], p['dataset'], model_type)
+# print(dp_model)
 
 scene_ids = dataset_params.get_present_scene_ids(dp_split)
 for scene_id in scene_ids:
@@ -80,10 +96,11 @@ for scene_id in scene_ids:
 
   # Add object models.
   for obj_id in dp_model['obj_ids']:
+    # print(obj_id)
     ren.add_object(obj_id, dp_model['model_tpath'].format(obj_id=obj_id))
 
   im_ids = sorted(scene_gt.keys())
-  for im_id in im_ids:
+  for im_id in tqdm(im_ids):
 
     if im_id % 100 == 0:
       misc.log(

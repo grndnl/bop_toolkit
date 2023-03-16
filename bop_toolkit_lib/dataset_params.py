@@ -73,7 +73,7 @@ def get_model_params(datasets_path, dataset_name, model_type=None):
   """
   # Object ID's.
   obj_ids = {
-    'lm': list(range(1, 16)),
+    'lm': list(range(1, 17)),
     'lmo': [1, 5, 6, 8, 9, 10, 11, 12],
     'tless': list(range(1, 31)),
     'tudl': list(range(1, 4)),

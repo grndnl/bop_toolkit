@@ -17,7 +17,7 @@ from bop_toolkit_lib import view_sampler
 # PARAMETERS.
 ################################################################################
 # See dataset_params.py for options.
-dataset = 'tyol'
+dataset = 'lm'
 
 # Radii of view spheres from which to render the objects.
 if dataset == 'lm':
@@ -45,11 +45,12 @@ if dataset == 'tless':
   cam_type = 'primesense'
 
 # Objects to render ([] = all objects from the specified dataset).
-obj_ids = []
+obj_ids = [16]
 
 # Minimum required number of views on the whole view sphere. The final number of
 # views depends on the sampling method.
-min_n_views = 1000
+# min_n_views = 1000
+min_n_views = 10
 
 # Rendering parameters.
 ambient_weight = 0.5  # Weight of ambient light [0, 1]

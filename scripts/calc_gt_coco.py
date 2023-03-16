@@ -7,6 +7,7 @@ import numpy as np
 import os
 import datetime
 import json
+from tqdm import tqdm
 
 from bop_toolkit_lib import pycoco_utils
 from bop_toolkit_lib import config
@@ -19,7 +20,7 @@ from bop_toolkit_lib import misc
 ################################################################################
 p = {
   # See dataset_params.py for options.
-  'dataset': 'tudl',
+  'dataset': 'lm',
 
   # Dataset split. Options: 'train', 'test'.
   'dataset_split': 'train',
@@ -31,7 +32,7 @@ p = {
   'bbox_type': 'amodal',
 
   # Folder containing the BOP datasets.
-  'datasets_path': config.datasets_path,
+  'datasets_path': "D:/bop_toolkit/data/lm/blenderproc/bop_data",
 
 }
 ################################################################################
@@ -59,7 +60,7 @@ INFO = {
     "date_created": datetime.datetime.utcnow().isoformat(' ')
 }
 
-for scene_id in dp_split['scene_ids']:
+for scene_id in tqdm(dp_split['scene_ids']):
     segmentation_id = 1
 
     coco_scene_output = {
@@ -99,11 +100,11 @@ for scene_id in dp_split['scene_ids']:
             mask_visib_p = dp_split['mask_visib_tpath'].format(scene_id=scene_id, im_id=im_id, gt_id=idx)
             mask_full_p = dp_split['mask_tpath'].format(scene_id=scene_id, im_id=im_id, gt_id=idx)
             
-            binary_inst_mask_visib = inout.load_depth(mask_visib_p).astype(np.bool)
+            binary_inst_mask_visib = inout.load_depth(mask_visib_p).astype(bool)
             if binary_inst_mask_visib.sum() < 1:
                 continue
             if bbox_type == 'amodal':
-                binary_inst_mask_full = inout.load_depth(mask_full_p).astype(np.bool)
+                binary_inst_mask_full = inout.load_depth(mask_full_p).astype(bool)
                 if binary_inst_mask_full.sum() < 1:
                     continue
                 bounding_box = pycoco_utils.bbox_from_binary_mask(binary_inst_mask_full)

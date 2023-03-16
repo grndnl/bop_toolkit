@@ -6,6 +6,7 @@ from bop_toolkit_lib import config
 from bop_toolkit_lib import dataset_params
 from bop_toolkit_lib import inout
 from bop_toolkit_lib import misc
+import numpy as np
 
 
 # PARAMETERS.
@@ -15,10 +16,10 @@ p = {
   'dataset': 'lm',
 
   # Type of input object models.
-  'model_type': None,
+  'model_type': 'pbr',
 
   # Folder containing the BOP datasets.
-  'datasets_path': config.datasets_path,
+  'datasets_path': "D:/bop_toolkit/data/lm/blenderproc/bop_data",
 }
 ################################################################################
 
@@ -34,8 +35,8 @@ for obj_id in dp_model['obj_ids']:
     model = inout.load_ply(dp_model['model_tpath'].format(obj_id=obj_id))
 
     # Calculate 3D bounding box.
-    ref_pt = map(float, model['pts'].min(axis=0).flatten())
-    size = map(float, (model['pts'].max(axis=0) - ref_pt).flatten())
+    ref_pt = np.array(list(map(float, model['pts'].min(axis=0)))).flatten()
+    size = np.array(list(map(float, (model['pts'].max(axis=0) - ref_pt)))).flatten()
 
     # Calculated diameter.
     diameter = misc.calc_pts_diameter(model['pts'])
